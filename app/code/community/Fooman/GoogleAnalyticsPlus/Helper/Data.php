@@ -93,7 +93,6 @@ class Fooman_GoogleAnalyticsPlus_Helper_Data extends Mage_Core_Helper_Abstract
             $itemDetails = "{
                 'id': '" . $this->jsQuoteEscape($item->getSku()) . "',
                 'name': '" . $this->jsQuoteEscape($item->getName()) . "',
-                'sku': '" . $this->jsQuoteEscape($item->getSku()) . "',
                 'price': '"
                 . Mage::helper('googleanalyticsplus')->convert($item, 'price', ($order instanceof Mage_Sales_Model_Order) ? $order->getOrderCurrencyCode() : $order->getQuoteCurrencyCode())
                 . "',

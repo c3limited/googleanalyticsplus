@@ -63,7 +63,6 @@
             <?php $itemDetails = "{
                 'id': '".$this->jsQuoteEscape($item->getSku()) ."',
                 'name': '". $this->jsQuoteEscape($item->getName()) ."',
-                'sku': '". $this->jsQuoteEscape($item->getSku()) ."',
                 'price': '". Mage::helper('googleanalyticsplus')->convert($item, 'price', $order->getOrderCurrencyCode()) ."',
                 'quantity': '". (int)$item->getQtyOrdered() ."',
                 'category': '". $this->jsQuoteEscape($this->getCategory($item)) ."'
