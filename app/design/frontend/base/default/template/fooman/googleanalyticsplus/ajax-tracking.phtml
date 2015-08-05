@@ -11,20 +11,46 @@
             this.altUniversal = settings.altUniversal;
             this.useDataLayer = settings.useDataLayer;
         },
+        checkoutStep: function(section){
+            console.log(section);
+            switch(section) {
+                case "login/": return 1;
+                case "billing/": return 2;
+                case "shipping/": return 3;
+                case "shipping_method/": return 4;
+                case "payment/": return 5;
+                case "review/": return 6;
+                case "review-placeOrderClicked/": return 7;
+            }
+        },
         trackEvent: function(section){
-
             var urlToTrack = this.baseUrl + '/' + section + this.pageQuery;
             if (this.universal) {
+                <?php echo Mage::helper('googleanalyticsplus')->getCartProductEC(Mage::getSingleton('checkout/session')->getQuote()) ?>
+                ga('set', '&cu', '<?php echo Mage::helper('googleanalyticsplus')->getTrackingCurrency(Mage::getSingleton('checkout/session')->getQuote()) ?>');
+                ga('ec:setAction','checkout', {'step': this.checkoutStep(section)});
+                ga('set', 'dimension1', '<?php echo Mage::app()->getStore()->getCode() ?>'); // Store
                 ga('send', 'pageview', urlToTrack);
             }
             if (this.altUniversal) {
+                ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.set', '&cu', '<?php echo Mage::helper('googleanalyticsplus')->getTrackingCurrency(Mage::getSingleton('checkout/session')->getQuote()) ?>');
+                ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.ec:setAction','checkout', {'step': this.checkoutstep(section)});
+                ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.set', 'dimension1', '<?php echo Mage::app()->getStore()->getCode() ?>'); // Store
                 ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.send', 'pageview', urlToTrack);
             }
             if (this.useDataLayer) {
                 dataLayer.push({'event': section});
             }
+        },
+        trackActionOption: function(section, option){
+            ga('ec:setAction', 'checkout_option', {'step': this.checkoutStep(section), 'option': option});
+            ga('send', 'event', 'Checkout', 'Option');
+            if (this.altUniversal) {
+                ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.ec:setAction', 'checkout_option', {'step': this.checkoutStep(section), 'option': option});
+                ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.send', 'event', 'Checkout', 'Option');
+            }
         }
-    }
+    };
 
     var foomanGoogleAnalytics = new FoomanGoogleAnalytics({
             baseUrl: '<?php echo $this->getBasePageName() ?>',
@@ -42,6 +68,7 @@
             } else {
                 var trackelement = section.id;
             }
+            trackelement = trackelement.replace('opc-', '') + '/';
             foomanGoogleAnalytics.trackEvent(trackelement);
             originalOpenSection(section);
         });
@@ -49,8 +76,28 @@
 
     if (typeof(Review) != "undefined") {
         Review.prototype.save  = Review.prototype.save.wrap(function(originalSave){
-            foomanGoogleAnalytics.trackEvent('opc-review-placeOrderClicked');
+            foomanGoogleAnalytics.trackEvent('review-placeOrderClicked/');
             originalSave();
+        });
+    }
+
+    if (typeof(ShippingMethod) != "undefined") {
+        ShippingMethod.prototype.save = ShippingMethod.prototype.save.wrap(function(originalSave){
+            if (checkout.loadWaiting!=false) return;
+            if (this.validate()) {
+                foomanGoogleAnalytics.trackActionOption('shipping_method/',$$('input:checked[type=radio][name=shipping_method]')[0].value);
+                originalSave();
+            }
+        });
+    }
+
+    if (typeof(Payment) != "undefined") {
+        Payment.prototype.save = Payment.prototype.save.wrap(function(originalSave){
+            if (checkout.loadWaiting!=false) return;
+            if (this.validate()) {
+                foomanGoogleAnalytics.trackActionOption('payment/',this.currentMethod);
+                originalSave();
+            }
         });
     }
 
