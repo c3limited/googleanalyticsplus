@@ -13,14 +13,16 @@
         },
         checkoutStep: function(section){
             switch(section) {
-                case "login": return 1;
-                case "billing": return 2;
-                case "shipping": return 3;
-                case "shipping_method": return 4;
-                case "payment": return 5;
-                case "review": return 6;
-                case "review-placeOrderClicked": return 7;
+                case "cart": return 1;
+                case "login": return 2;
+                case "billing": return 3;
+                case "shipping": return 4;
+                case "shipping_method": return 5;
+                case "payment": return 6;
+                case "review": return 7;
+                case "review-placeOrderClicked": return 8;
             }
+            return 0;
         },
         trackEvent: function(section){
             var urlToTrack = this.baseUrl + '/' + section + this.pageQuery;
@@ -96,7 +98,9 @@
         ShippingMethod.prototype.save = ShippingMethod.prototype.save.wrap(function(originalSave){
             if (checkout.loadWaiting!=false) return;
             if (this.validate()) {
-                foomanGoogleAnalytics.trackActionOption('shipping_method',$$('input:checked[type=radio][name=shipping_method]')[0].value);
+                var shippingMethodOption = $(shippingMethod.form).select('input[name="shipping_method"][checked]')[0];
+                shippingMethodOption = (typeof shippingMethodOption == 'undefined') ? null : shippingMethodOption.value;
+                foomanGoogleAnalytics.trackActionOption('shipping_method',shippingMethodOption);
                 originalSave();
             }
         });

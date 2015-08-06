@@ -28,7 +28,15 @@
             <?php endif;?>
         <?php endif;?>
 
-    <?php if($this->isSuccessPage()):?>
+    <?php if($this->isCartPage()):?>
+        <?php echo Mage::helper('googleanalyticsplus')->getCartProductEC(Mage::getSingleton('checkout/session')->getQuote()) ?>
+        ga('set', '&cu', '<?php echo Mage::helper('googleanalyticsplus')->getTrackingCurrency(Mage::getSingleton('checkout/session')->getQuote()) ?>');
+        ga('ec:setAction','checkout', {'step': 1}); // cart step
+        if ($altUniversal) {
+            ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.set', '&cu', '<?php echo Mage::helper('googleanalyticsplus')->getTrackingCurrency(Mage::getSingleton('checkout/session')->getQuote()) ?>');
+            ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.ec:setAction','checkout', {'step': 1});
+        }
+    <?php elseif($this->isSuccessPage()):?>
         <?php $order = $this->_getOrder();?>
             /* <![CDATA[ */
         <?php if ($altUniversal):?>
@@ -69,7 +77,6 @@
                 }";
                 ?>
 
-
             ga('ec:addProduct', <?php echo $itemDetails?>);
             <?php if ($altUniversal):?>
                 ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.ec:addProduct', <?php echo $itemDetails?>);
@@ -80,6 +87,7 @@
     ga('set', 'dimension1', '<?php echo Mage::app()->getStore()->getCode() ?>'); // Store
     ga('send', 'pageview', '<?php echo $this->getPageName(); ?>');
     <?php if ($altUniversal):?>
+        ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.set', 'dimension1', '<?php echo Mage::app()->getStore()->getCode() ?>'); // Store
         ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.send', 'pageview', '<?php echo $this->getPageName(); ?>');
     <?php endif;?>
     <!-- End Google Analytics -->

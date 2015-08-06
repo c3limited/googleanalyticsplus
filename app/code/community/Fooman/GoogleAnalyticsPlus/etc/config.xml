@@ -72,6 +72,9 @@
                     <checkout_multishipping_success/>
                     <checkout_onepage_success/>
                 </success_page_handles>
+                <cart_page_handles>
+                    <checkout_cart_index/>
+                </cart_page_handles>
             </analyticsplus_abstract>
             <analyticsplus_classic>
                 <conversionenabled>0</conversionenabled>
