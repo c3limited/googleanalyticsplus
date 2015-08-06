@@ -70,20 +70,21 @@
                 var trackelement = section.id;
             }
             trackelement = trackelement.replace('opc-', '');
-            // Output login option before continuing to billing
-            if (trackelement == 'billing') {
-
-                if (checkout.method == 'guest') {
-                    foomanGoogleAnalytics.trackEvent('login');
-                    foomanGoogleAnalytics.trackActionOption('login','guest');
-                } else if (checkout.method == 'register') {
-                    foomanGoogleAnalytics.trackEvent('login');
-                    foomanGoogleAnalytics.trackActionOption('login','register');
-                }
-                // Do not track login page if logged in as not always shown
-            }
             foomanGoogleAnalytics.trackEvent(trackelement);
             originalOpenSection(section);
+        });
+    }
+
+    if (typeof(Checkout) != "undefined") {
+        Checkout.prototype.setMethod  = Checkout.prototype.setMethod.wrap(function(originalSave){
+            originalSave();
+            if (checkout.method == 'guest') {
+                foomanGoogleAnalytics.trackEvent('login');
+                foomanGoogleAnalytics.trackActionOption('login','guest');
+            } else if (checkout.method == 'register') {
+                foomanGoogleAnalytics.trackEvent('login');
+                foomanGoogleAnalytics.trackActionOption('login','register');
+            }
         });
     }
 

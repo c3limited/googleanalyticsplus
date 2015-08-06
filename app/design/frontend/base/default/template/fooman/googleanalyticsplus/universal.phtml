@@ -32,10 +32,10 @@
         <?php echo Mage::helper('googleanalyticsplus')->getCartProductEC(Mage::getSingleton('checkout/session')->getQuote()) ?>
         ga('set', '&cu', '<?php echo Mage::helper('googleanalyticsplus')->getTrackingCurrency(Mage::getSingleton('checkout/session')->getQuote()) ?>');
         ga('ec:setAction','checkout', {'step': 1}); // cart step
-        if ($altUniversal) {
+        <?php if ($altUniversal):?>
             ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.set', '&cu', '<?php echo Mage::helper('googleanalyticsplus')->getTrackingCurrency(Mage::getSingleton('checkout/session')->getQuote()) ?>');
             ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.ec:setAction','checkout', {'step': 1});
-        }
+        <?php endif; ?>
     <?php elseif($this->isSuccessPage()):?>
         <?php $order = $this->_getOrder();?>
             /* <![CDATA[ */
