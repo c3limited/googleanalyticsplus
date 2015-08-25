@@ -96,7 +96,7 @@ class Fooman_GoogleAnalyticsPlus_Helper_Data extends Mage_Core_Helper_Abstract
                 'price': '"
                 . Mage::helper('googleanalyticsplus')->convert($item, 'price', ($order instanceof Mage_Sales_Model_Order) ? $order->getOrderCurrencyCode() : $order->getQuoteCurrencyCode())
                 . "',
-                'quantity': '" . (int)$item->getQtyOrdered() . "',
+                'quantity': '" . (int)($item->getQtyOrdered() != null ? $item->getQtyOrdered() : $item->getQty()) . "',
                 'category': '" . $this->jsQuoteEscape($this->getCategory($item))
                 . "'
             }";
