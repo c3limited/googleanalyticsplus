@@ -44,8 +44,10 @@
             }
         },
         trackActionOption: function(section, option){
-            ga('ec:setAction', 'checkout_option', {'step': this.checkoutStep(section), 'option': option});
-            ga('send', 'event', 'Checkout', 'Option');
+            if (this.universal) {
+                ga('ec:setAction', 'checkout_option', {'step': this.checkoutStep(section), 'option': option});
+                ga('send', 'event', 'Checkout', 'Option');
+            }
             if (this.altUniversal) {
                 ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.ec:setAction', 'checkout_option', {'step': this.checkoutStep(section), 'option': option});
                 ga('<?php echo Fooman_GoogleAnalyticsPlus_Block_Universal::TRACKER_TWO_NAME?>.send', 'event', 'Checkout', 'Option');
